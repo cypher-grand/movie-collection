@@ -135,9 +135,26 @@ describe('Movie Tests', function() {
   });
 
   describe('Delete Movie', function() {
-    it('Should remove the created user', function() {
-
+    it('Should delete a movie given a valid movie id', function() {
+      chai.request(server).delete('/movie/' + movie._id).set('Authorization', user.token).send(newMovie).end(function (err, res) {
+        assert.equal(res.body.success, true)
+        res.should.be.json;
+        res.body.should.be.a('object');
+        done();
+      });
     });
-  });
+    it('Should NOT delete a movie with an invalid movie id', function() {
+      chai.request(server).put('/movie/' + 'xyz123%*').set('Authorization', user.token).send(newMovie).end(function (err, res) {
+        assert.equal(res.body.success, true)
+        assert.equal(res.body.error, true)
+        res.should.be.json;
+        res.should.have.status(400);
+        res.body.should.have.property('message');
+        res.body.errors.pages.should.have.property('message').eql('Unable to locate that movie.');
+        done();
+      });
+    });
 
+  });
+  
 });
