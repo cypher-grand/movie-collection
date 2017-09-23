@@ -27,14 +27,16 @@ describe('Authentication Tests', function() {
   }
 
   // this is expected to work the first time. Fail everytime thereafter
-  describe('Registration', function() {
+  describe('User Registration', function() {
     it('Should register a new user', function(done) {
       chai.request(server).post('/register').send(newUser).end(function (err, res) {
         assert.equal(err, undefined)
         assert.equal(res.body.success, true)
+        assert.equal(res.body.message, "Created account")
         res.should.have.status(201);
         res.body.user.should.be.a('object');
         res.body.user.should.have.property('_id');
+        res.body.user.should.have.property('email')
         res.body.user.should.have.property('token');
         done();
       });
@@ -61,6 +63,7 @@ describe('Authentication Tests', function() {
         res.should.have.status(200);
         res.body.user.should.be.a('object');
         res.body.user.should.have.property('_id');
+        res.body.user.should.have.property('email');
         res.body.user.should.have.property('token');
         user = res.body.user
         done();
@@ -92,18 +95,27 @@ describe('Movie Tests', function() {
     year: '2017'
   }
 
-  describe('Create', function() {
+  describe('Create Movie', function() {
     it('Should create a new movie with the API', function(done) {
       chai.request(server).post('/movie').set('Authorization', user.token).send(newMovie).end(function (err, res) {
         assert.equal(err, undefined)
         assert.equal(res.body.success, true)
         res.should.have.status(201);
+        res.should.be.json;
+        res.body.should.be.a('object');
+        res.body.should.have.property('movie');
+        res.body.movie.should.have.property('title').eql("Testing Title");
+        res.body.movie.should.have.property('genre').eql("Testing Genre");
+        res.body.movie.should.have.property('rating').eql("10");
+        res.body.movie.should.have.property('year').eql("2017");
+        res.body.movie.should.have.property('actors').to.have.same.members("Steve Martin, Collin Ferral, Leo Decaprio");
+        res.body.movie.should.have.property('uploadedByUser').eql(user._id);
         done();
       });
     });
   });
 
-  describe('Read', function() {
+  describe('Get Movies', function() {
     it('Should send back a list of all movies', function(done) {
       chai.request(server).get('/movies').end(function (err, res) {
         assert.equal(err, undefined)
@@ -116,13 +128,13 @@ describe('Movie Tests', function() {
     });
   });
 
-  describe('Update', function() {
+  describe('Update Movie', function() {
     it('Should update a movie', function() {
 
     });
   });
 
-  describe('Delete', function() {
+  describe('Delete Movie', function() {
     it('Should remove the created user', function() {
 
     });
