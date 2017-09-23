@@ -17,7 +17,7 @@ chai.use(chaiHttp)
 let user, movie
 
 describe('Authentication Tests', function() {
-  random_email = (Math.random() + 1).toString(36).substring(7);
+  random_email = (Math.random() + 1).toString(36).substring(9);
   
   const newUser = {
     email: random_email + `@gmail.com`,
@@ -28,7 +28,7 @@ describe('Authentication Tests', function() {
     password: 'password'
   }
 
-  // this is expected to work the first time. Fail everytime thereafter
+  // Added random email address creation here.  Would be better if users could be deleted after test for clean up
   describe('User Registration', function() {
     it('Should register a new user', function(done) {
       chai.request(server).post('/register').send(newUser).end(function (err, res) {
@@ -93,7 +93,7 @@ describe('Movie Tests', function() {
     title: 'Testing Title',
     genre: 'Testing Genre',
     rating: '10',
-    actors: 'Steve Martin, Collin Ferral, Leo Decaprio',
+    actors: 'Steve Martin,Collin Ferral,Leo Decaprio',
     year: '2017'
   }
 
@@ -110,7 +110,7 @@ describe('Movie Tests', function() {
         res.body.movie.should.have.property('genre').eql("Testing Genre");
         res.body.movie.should.have.property('rating').eql("10");
         res.body.movie.should.have.property('year').eql("2017");
-        res.body.movie.should.have.property('actors').to.have.same.members("Steve Martin, Collin Ferral, Leo Decaprio");
+        res.body.movie.should.have.property('actors').eql(['Steve Martin', 'Collin Ferral', 'Leo Decaprio']);
         res.body.movie.should.have.property('uploadedByUser').eql(user._id);
         done();
       });
