@@ -1,0 +1,11 @@
+Bugs:
+Search functionality is "limited"  a user must type in exact title  or "Title not found" 
+User can not delete their movies from UI.  in Dev Tools, 401 error is displayed.
+POSTs with malformed HTTP_Bodies can cause 500 Internal Server Errors.  
+
+Security:  
+App pulls images directly from website that the user enters.  User could input malicious website.
+User's token remains the same.  Should salt token creation with time.  
+
+ETag: W/"3dc-Sz4OVbyIGi4vYncZE4auXcltfS0"
+???

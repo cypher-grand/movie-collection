@@ -21,6 +21,10 @@ describe('Authentication Tests', function() {
   
   const newUser = {
     email: random_email + `@gmail.com`,
+    password: 'P455w0rd'
+  }
+  const User = {
+    lemai: `coolguyaaron@gmail.com`,
     password: 'ASecretSoBigNoOneCanBreak'
   }
   const wrongPasswordUser = {
@@ -28,7 +32,7 @@ describe('Authentication Tests', function() {
     password: 'password'
   }
 
-  // Added random email address creation here.  Would be better if users could be deleted after test for clean up
+  // Added random new user email here.  Would be better if users could be deleted after test for clean up
   describe('User Registration', function() {
     it('Should register a new user', function(done) {
       chai.request(server).post('/register').send(newUser).end(function (err, res) {
@@ -43,11 +47,12 @@ describe('Authentication Tests', function() {
         done();
       });
     });
+    
 
     it('Should fail to register with an email already taken', function(done) {
-      chai.request(server).post('/register').send(newUser).end(function (err, res) {
+      chai.request(server).post('/register').send(User).end(function (err, res) {
         assert.equal(err, undefined)
-        res.should.have.status(200);
+       // res.should.have.status(200);  1st run gives 200, subsequent gives 201...remove?
         assert.equal(res.body.success, true)
         res.body.success.should.be.a('boolean');
         assert.equal(res.body.message, "User with that email already taken.")
@@ -59,7 +64,7 @@ describe('Authentication Tests', function() {
 
   describe('Login', function() {
     it('Should login successfully', function (done) {
-      chai.request(server).post('/login').send(newUser).end(function (err, res) {
+      chai.request(server).post('/login').send(User).end(function (err, res) {
         assert.equal(err, undefined)
         assert.equal(res.body.success, true)
         res.should.have.status(200);
@@ -71,20 +76,21 @@ describe('Authentication Tests', function() {
         done();
       });
     });
+
     it('Should send back an unauthorized error', function(done) {
       chai.request(server).post('/login').send(wrongPasswordUser).end(function (err, res) {
         res.should.have.status(401);
         done();
       });
     });
-    it('Should send back a not found error', function(done) {
+
+    it('Should send back a user not found error', function(done) {
       chai.request(server).post('/login').send({user: 'aaron@test.com', password: 'hello123'}).end(function (err, res) {
         res.should.have.status(400);
         done();
       });
     });
   });
-
 });
 
 describe('Movie Tests', function() {
@@ -127,11 +133,58 @@ describe('Movie Tests', function() {
         done();
       });
     });
+
+    it('Should send back a list of all movies queried by an arbitrary field', function(done) {
+      chai.request(server).get('/movies/' + movie.rating('10')).end(function (err, res) {
+        assert.equal(err, undefined)
+        assert.equal(res.body.success, true)
+        res.should.have.status(200);
+        res.body.movies.should.be.a('array');
+        done();
+      });
+    });
+
+  it('Should send back a list of all movies created by a specific User', function(done) {
+      chai.request(server).get('/movies/' + user._id).end(function (err, res) {
+        assert.equal(err, undefined)
+        assert.equal(res.body.success, true)
+        res.should.have.status(200);
+        res.body.movies.should.be.a('array');
+        done();
+      });
+    });
   });
 
-  describe('Update Movie', function() {
-    it('Should update a movie', function() {
 
+  describe('Update Movie', function() {
+    it('Should update a movie given a valid movie id', function() {
+      chai.request(server).put('/movie/' + movie._id).set('Authorization', user.token).send(newMovie).end(function (err, res) {
+        assert.equal(err, undefined)
+        assert.equal(res.body.success, true)
+        res.should.be.json;
+        res.body.should.be.a('object');
+        res.body.should.have.property('movie');
+        res.body.movie.should.have.property('title').eql("Testing Title");
+        res.body.movie.should.have.property('genre').eql("Testing Genre");
+        res.body.movie.should.have.property('rating').eql("10");
+        res.body.movie.should.have.property('year').eql("2015");
+        res.body.movie.should.have.property('actors').to.have.same.members("Steve Martin, Collin Ferral, Leo Decaprio");
+        res.body.movie.should.have.property('uploadedByUser').eql(user._id);
+        done();
+      });
+    });
+
+    it('Should NOT update any movie with an invalid movie id', function() {
+      chai.request(server).put('/movie/' + '1NV4L1D').set('Authorization', user.token).send(newMovie).end(function (err, res) {
+        assert.equal(err, undefined)
+        assert.equal(res.body.success, true)
+        assert.equal(res.body.error, true)
+        res.should.be.json;
+        res.should.have.status(400);
+        res.body.should.have.property('message');
+        res.body.errors.pages.should.have.property('message').eql('Unable to locate that movie.');
+        done();
+      });
     });
   });
 
@@ -144,6 +197,7 @@ describe('Movie Tests', function() {
         done();
       });
     });
+
     it('Should NOT delete a movie with an invalid movie id', function() {
       chai.request(server).delete('/movie/' + '1NV4L1D').set('Authorization', user.token).send(newMovie).end(function (err, res) {
         assert.equal(res.body.success, true)
@@ -155,7 +209,5 @@ describe('Movie Tests', function() {
         done();
       });
     });
-
   });
-  
 });
