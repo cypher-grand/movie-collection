@@ -1,8 +1,9 @@
 Bugs:
 Search functionality is "limited"  a user must type in exact title  or "Title not found" 
 User can not delete their movies from UI.  in Dev Tools, 401 error is displayed.
+Delete route can not find ID
 POSTs with malformed HTTP_Bodies can cause 500 Internal Server Errors.  
-
+Get /movie/id route does not work.   
 Security:  
 App pulls images directly from website that the user enters.  User could input malicious website.
 User's token remains the same.  Should salt token creation with time.  

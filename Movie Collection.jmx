@@ -186,7 +186,7 @@
           <stringProp name="HTTPSampler.port">${Port}</stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">movie/59c6c111b7672612881e81e1</stringProp>
+          <stringProp name="HTTPSampler.path">movie/</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
