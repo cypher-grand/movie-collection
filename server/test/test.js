@@ -17,8 +17,10 @@ chai.use(chaiHttp)
 let user, movie
 
 describe('Authentication Tests', function() {
+  random_email = (Math.random() + 1).toString(36).substring(7);
+  
   const newUser = {
-    email: `coolguyaaron@gmail.com`,
+    email: random_email + `@gmail.com`,
     password: 'ASecretSoBigNoOneCanBreak'
   }
   const wrongPasswordUser = {
@@ -122,7 +124,6 @@ describe('Movie Tests', function() {
         assert.equal(res.body.success, true)
         res.should.have.status(200);
         res.body.movies.should.be.a('array');
-        assert.equal(res.body.movies.length, 1)
         done();
       });
     });
@@ -144,7 +145,7 @@ describe('Movie Tests', function() {
       });
     });
     it('Should NOT delete a movie with an invalid movie id', function() {
-      chai.request(server).put('/movie/' + 'xyz123%*').set('Authorization', user.token).send(newMovie).end(function (err, res) {
+      chai.request(server).delete('/movie/' + '1NV4L1D').set('Authorization', user.token).send(newMovie).end(function (err, res) {
         assert.equal(res.body.success, true)
         assert.equal(res.body.error, true)
         res.should.be.json;
