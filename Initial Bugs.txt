@@ -4,9 +4,28 @@ User can not delete their movies from UI.  in Dev Tools, 401 error is displayed.
 Delete route can not find ID
 POSTs with malformed HTTP_Bodies can cause 500 Internal Server Errors.  
 Creating a new or modifying a movie does not seem to work via the API...probably user error
+Unable to search by an arbitary field
 
 Security:  
 App pulls images directly from website that the user enters.  User could input malicious website.
 User's token remains the same.  Should salt token creation with time.  
 
 ETag: W/"3dc-Sz4OVbyIGi4vYncZE4auXcltfS0" ???
+
+
+
+Objective
+Create a webpage that manages a home movie collection.
+
+User Stories
+- As a user I want to use the app in the latest version of Chrome.
+- As a user I want to be able to enter new movies.
+- As a user I want to be able to search existing movies by an arbitrary field.
+- As a user I want to be able to see a list of all my movies.
+- As a user I want to be able to either DELETE and UPDATE a movie.
+- As a user I want to record the following info about any given movie :
+    - Genre
+    - Actors
+    - Title
+    - Year
+    - Rating
