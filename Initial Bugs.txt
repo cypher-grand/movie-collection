@@ -1,16 +1,15 @@
 Bugs:
-Search functionality is "limited"  a user must type in exact title  or "Title not found" 
-User can not delete their movies from UI.  in Dev Tools, 401 error is displayed.
-Delete route can not find ID
-POSTs with malformed HTTP_Bodies can cause 500 Internal Server Errors.  
-Creating a new or modifying a movie does not seem to work via the API...probably user error
-Unable to search by an arbitary field
+Unable to search for movies via API currently 
+Unable to delete a movie, via API or UI
+Unable to update a movie, via API or UI
+POSTs with malformed HTTP_Bodies can cause 500 Internal Server Errors
+Search functionality is "limited"  a user must type in exact title  or "Title not found"
 
 Security:  
 App pulls images directly from website that the user enters.  User could input malicious website.
 User's token remains the same.  Should salt token creation with time.  
 
-ETag: W/"3dc-Sz4OVbyIGi4vYncZE4auXcltfS0" ???
+
 
 
 

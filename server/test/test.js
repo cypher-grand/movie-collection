@@ -32,7 +32,9 @@ describe('Authentication Tests', function() {
     password: 'password'
   }
 
-  // Added random new user email here.  Would be better if users could be deleted after test for clean up
+  // Added random new user email here.  Would be better if users could be deleted after test
+  // for clean up
+
   describe('User Registration', function() {
     it('Should register a new user', function(done) {
       chai.request(server).post('/register').send(newUser).end(function (err, res) {
@@ -52,7 +54,6 @@ describe('Authentication Tests', function() {
     it('Should fail to register with an email already taken', function(done) {
       chai.request(server).post('/register').send(User).end(function (err, res) {
         assert.equal(err, undefined)
-       // res.should.have.status(200);  1st run gives 200, subsequent gives 201...remove?
         assert.equal(res.body.success, true)
         res.body.success.should.be.a('boolean');
         assert.equal(res.body.message, "User with that email already taken.")
@@ -97,6 +98,12 @@ describe('Authentication Tests', function() {
 const usertoken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjU5YzZjMTBmYjc2NzI2MTI4ODFlODFlMCJ9.44z4qc9B3TcZQxOlGQzzdCN78elta9pF3myPXhhIHjw'
 const userid = '59c6c10fb7672612881e81e0'
 const movieid = '59c6c111b7672612881e81e1'
+const imagePoster = 'http://127.0.0.1'
+const title = 'Bladerunner'
+const genre = 'Science Fiction'
+const rating = '11'
+const actors = 'Harrison Ford'
+const year = '1982'
 
 describe('Movie Tests', function() {
   const newMovie = {
@@ -107,6 +114,7 @@ describe('Movie Tests', function() {
     actors: 'Steve Martin,Collin Ferral,Leo Decaprio',
     year: '2017'
   }
+
 
   describe('Create Movie', function() {
     it('Should create a new movie with the API', function(done) {
@@ -139,9 +147,51 @@ describe('Movie Tests', function() {
       });
     });
 
-    //I am not sure about this one. Review User Story
-    it('Should send back a list of all movies queried by an arbitrary field', function(done) {
-      chai.request(server).get('/movies/' + movie.rating('10')).end(function (err, res) {
+    //I am not sure about this one. User story states "As a user I want to be able to search 
+    //existing movies by an arbitrary field." - Genre Actors,Title,Year,Rating
+    //More information would be added if it existed in the source code.
+    it('Should send back a list of all movies queried by genre', function(done) {
+      chai.request(server).get('/movies/genre' + genre).end(function (err, res) {
+        assert.equal(err, undefined)
+        assert.equal(res.body.success, true)
+        res.should.have.status(200);
+        res.body.movies.should.be.a('array');
+        done();
+      });
+    });
+    
+    it('Should send back a list of all movies queried by actors', function(done) {
+      chai.request(server).get('/movies/actors' + actors).end(function (err, res) {
+        assert.equal(err, undefined)
+        assert.equal(res.body.success, true)
+        res.should.have.status(200);
+        res.body.movies.should.be.a('array');
+        done();
+      });
+    });
+
+    it('Should send back a list of all movies queried by title', function(done) {
+      chai.request(server).get('/movies/title' + title).end(function (err, res) {
+        assert.equal(err, undefined)
+        assert.equal(res.body.success, true)
+        res.should.have.status(200);
+        res.body.movies.should.be.a('array');
+        done();
+      });
+    });
+
+    it('Should send back a list of all movies queried by year', function(done) {
+      chai.request(server).get('/movies/year' + year).end(function (err, res) {
+        assert.equal(err, undefined)
+        assert.equal(res.body.success, true)
+        res.should.have.status(200);
+        res.body.movies.should.be.a('array');
+        done();
+      });
+    });
+
+    it('Should send back a list of all movies queried by rating', function(done) {
+      chai.request(server).get('/movies/rating' + rating).end(function (err, res) {
         assert.equal(err, undefined)
         assert.equal(res.body.success, true)
         res.should.have.status(200);
@@ -175,7 +225,7 @@ describe('Movie Tests', function() {
         res.body.movie.should.have.property('genre').eql("Testing Genre");
         res.body.movie.should.have.property('rating').eql("10");
         res.body.movie.should.have.property('year').eql("2015");
-        res.body.movie.should.have.property('actors').to.have.same.members("Steve Martin, Collin Ferral, Leo Decaprio");
+        res.body.movie.should.have.property('actors').to.have.same.members("Steve Martin,Collin Ferral,Leo Decaprio");
         res.body.movie.should.have.property('uploadedByUser').eql(user._id);
         done();
       });
@@ -201,9 +251,9 @@ describe('Movie Tests', function() {
         assert.equal(res.body.success, true)
         res.should.be.json;
         res.should.have.status(200)
-        res.body.should.be.a('object');
-        //need to assert "error":true as behavior now...why you no-worky???
-        assert.equal(res.body.error, true)
+        res.body.should.be.json;
+       // This needs to be coded with the message that is passed on successful completion
+      res.body.errors.pages.should.have.property('message').eql('Movie Deleted.');
         done();
       });
     });
