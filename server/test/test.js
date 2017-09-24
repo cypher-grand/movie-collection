@@ -24,7 +24,7 @@ describe('Authentication Tests', function() {
     password: 'P455w0rd'
   }
   const User = {
-    lemai: `coolguyaaron@gmail.com`,
+    email: `coolguyaaron@gmail.com`,
     password: 'ASecretSoBigNoOneCanBreak'
   }
   const wrongPasswordUser = {
@@ -93,6 +93,11 @@ describe('Authentication Tests', function() {
   });
 });
 
+// come back and code these in with some logic after validating tests work
+const usertoken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjU5YzZjMTBmYjc2NzI2MTI4ODFlODFlMCJ9.44z4qc9B3TcZQxOlGQzzdCN78elta9pF3myPXhhIHjw'
+const userid = '59c6c10fb7672612881e81e0'
+const movieid = '59c6c111b7672612881e81e1'
+
 describe('Movie Tests', function() {
   const newMovie = {
     imagePoster: '',
@@ -105,7 +110,7 @@ describe('Movie Tests', function() {
 
   describe('Create Movie', function() {
     it('Should create a new movie with the API', function(done) {
-      chai.request(server).post('/movie').set('Authorization', user.token).send(newMovie).end(function (err, res) {
+      chai.request(server).post('/movie').set('Authorization', usertoken).send(newMovie).end(function (err, res) {
         assert.equal(err, undefined)
         assert.equal(res.body.success, true)
         res.should.have.status(201);
@@ -134,6 +139,7 @@ describe('Movie Tests', function() {
       });
     });
 
+    //I am not sure about this one. Review User Story
     it('Should send back a list of all movies queried by an arbitrary field', function(done) {
       chai.request(server).get('/movies/' + movie.rating('10')).end(function (err, res) {
         assert.equal(err, undefined)
@@ -145,7 +151,7 @@ describe('Movie Tests', function() {
     });
 
   it('Should send back a list of all movies created by a specific User', function(done) {
-      chai.request(server).get('/movies/' + user._id).end(function (err, res) {
+      chai.request(server).get('/users/' + userid + '/movies').end(function (err, res) {
         assert.equal(err, undefined)
         assert.equal(res.body.success, true)
         res.should.have.status(200);
@@ -155,10 +161,11 @@ describe('Movie Tests', function() {
     });
   });
 
+  
 
   describe('Update Movie', function() {
     it('Should update a movie given a valid movie id', function() {
-      chai.request(server).put('/movie/' + movie._id).set('Authorization', user.token).send(newMovie).end(function (err, res) {
+      chai.request(server).put('/movie/' + movieid).set('Authorization', usertoken).send(newMovie).end(function (err, res) {
         assert.equal(err, undefined)
         assert.equal(res.body.success, true)
         res.should.be.json;
@@ -175,7 +182,7 @@ describe('Movie Tests', function() {
     });
 
     it('Should NOT update any movie with an invalid movie id', function() {
-      chai.request(server).put('/movie/' + '1NV4L1D').set('Authorization', user.token).send(newMovie).end(function (err, res) {
+      chai.request(server).put('/movie/' + '1NV4L1D').set('Authorization', usertoken).send(newMovie).end(function (err, res) {
         assert.equal(err, undefined)
         assert.equal(res.body.success, true)
         assert.equal(res.body.error, true)
@@ -190,16 +197,19 @@ describe('Movie Tests', function() {
 
   describe('Delete Movie', function() {
     it('Should delete a movie given a valid movie id', function() {
-      chai.request(server).delete('/movie/' + movie._id).set('Authorization', user.token).send(newMovie).end(function (err, res) {
+      chai.request(server).delete('/movie/' + movieid).set('Authorization', usertoken).send(newMovie).end(function (err, res) {
         assert.equal(res.body.success, true)
         res.should.be.json;
+        res.should.have.status(200)
         res.body.should.be.a('object');
+        //need to assert "error":true as behavior now...why you no-worky???
+        assert.equal(res.body.error, true)
         done();
       });
     });
 
     it('Should NOT delete a movie with an invalid movie id', function() {
-      chai.request(server).delete('/movie/' + '1NV4L1D').set('Authorization', user.token).send(newMovie).end(function (err, res) {
+      chai.request(server).delete('/movie/' + '1NV4L1D').set('Authorization', usertoken).send(newMovie).end(function (err, res) {
         assert.equal(res.body.success, true)
         assert.equal(res.body.error, true)
         res.should.be.json;
