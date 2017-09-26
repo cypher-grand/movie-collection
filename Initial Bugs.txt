@@ -1,9 +1,12 @@
 Bugs:
 Unable to search for movies via API currently 
 Unable to delete a movie, via API or UI
-Unable to update a movie, via API or UI
+Unable to update a movie, via API
+The update movie works in the UI because of line in client\src\index.js:  
+<Route path="movies/:movie_id/edit" component={EditMovie} onEnter={requireAuth} />
+
 POSTs with malformed HTTP_Bodies can cause 500 Internal Server Errors
-Search functionality is "limited"  a user must type in exact title  or "Title not found"
+Search functionality is "limited"  a user must type in exact title  or "Title not found".  Other search from year, rating, genre, actors is not implemented.
 
 Security:  
 App pulls images directly from website that the user enters.  User could input malicious website.
